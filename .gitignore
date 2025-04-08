@@ -1,3 +1,6 @@
+# csv files in main dir
+*.csv
+
 .idea
 
 db/

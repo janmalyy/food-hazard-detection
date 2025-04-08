@@ -4,9 +4,9 @@ from typing import List, Dict, Any
 import pandas as pd
 from mistralai import Mistral
 
-import settings
-from llm_api import call_mistral
-from settings import MISTRAL_API_KEY
+from food_hazard_detection import settings
+from food_hazard_detection.settings import MISTRAL_API_KEY
+from food_hazard_detection.llm_api import call_mistral_for_synthetic_data_generation
 
 
 def generate_prompt_triplets_by_hazard(rare_hazards: List[str], dataset: pd.DataFrame) -> List[List[Any]]:
@@ -132,7 +132,7 @@ def generate_synthetic_data(output_path: str, prompt_path: str, combinations: Li
         mistral_client = Mistral(api_key=MISTRAL_API_KEY)
         with open(output_path, "a", encoding="utf-8") as f:
             for combination in combinations:
-                output = call_mistral(mistral_client, prompt, *combination).strip()
+                output = call_mistral_for_synthetic_data_generation(mistral_client, prompt, *combination).strip()
                 output = process_llm_output(output)
                 f.write(output)
                 f.write("\n")
