@@ -1,3 +1,4 @@
+import csv
 import re
 from typing import List, Dict, Any
 
@@ -83,7 +84,6 @@ def _generate_triplets(category_map: Dict[str, List[str]], dataset: pd.DataFrame
         List[List[Any]]: A list of triplet examples with format [hazard, product, [example1, example2, example3]].
     """
     triplet_list: List[List[Any]] = []
-
     for primary, related_list in category_map.items():
         for related in related_list:
             if by == "hazard":
@@ -110,6 +110,17 @@ def _generate_triplets(category_map: Dict[str, List[str]], dataset: pd.DataFrame
                            ]
                 triplet_list.append([hazard, product, triplet])
                 x += 3
+            # if you want 5 times more data, uncomment this and comment the above lines starting x = 0
+            # the datasets called big are created this way
+            # for j in range(5):
+            #     x = 0
+            #     df_subset = df_subset.sample(frac=1).reset_index(drop=True)
+            #     for i in range(len(df_subset) // 3):
+            #         triplet = [df_subset.iloc[[x + i]].to_csv(index=False, header=False, quoting=csv.QUOTE_ALL).strip()
+            #                    for i in range(3)
+            #                    ]
+            #         triplet_list.append([hazard, product, triplet])
+            #         x += 3
 
     return triplet_list
 
@@ -138,3 +149,21 @@ def generate_synthetic_data(output_path: str, prompt_path: str, combinations: Li
                 f.write("\n")
     else:
         raise NotImplementedError("Other LLM APIs are not implemented yet.")
+
+
+def repare_csv(file_path: str) -> None:
+    """
+    Caution: it does change the csv file inplace.
+    Wraps the text field in row in double quotes to help recognize the csv parser the columns properly.
+    """
+    with open(file_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    for i, line in enumerate(lines):
+        # one line in csv should look similar to this:
+        # 2021, 3, 15, uk, title, text, hazard-category, product-category, hazard, product
+        line = re.sub(r"^(\d{4},\d{1,2},\d{1,2},\w{2},.*?,)(.*)(,.*,.*,.*,.*)$", r'\1"\2"\3', line)
+        lines[i] = line
+
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.writelines(lines)
