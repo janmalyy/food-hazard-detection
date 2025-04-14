@@ -13,6 +13,24 @@ download('averaged_perceptron_tagger')
 download('stopwords')
 download('punkt_tab')
 
+
+def convert_product_size(value):
+    """
+    Convert a product_size string to a numerical value.
+    The function extracts the first group of digits (allowing commas),
+    removes commas, and converts the result to float.
+    """
+    if isinstance(value, str):
+        # Search for one or more digits possibly separated by commas
+        match = re.search(r'([\d,]+)', value)
+        if match:
+            number_str = match.group(1).replace(',', '')
+            try:
+                return float(number_str)
+            except ValueError:
+                return None
+    return None
+
 def extract_json(response: str):
     """Extract JSON content from a formatted string."""
     match = re.search(r"```json\s*(.*?)\s*```", response, re.DOTALL)
@@ -24,12 +42,12 @@ def extract_json(response: str):
     try:
         return json.loads(json_str)
     except json.JSONDecodeError as e:
-        print(f"Chyba při dekódování JSON: {e}")
+        print(f"Error when decoding JSON: {e}")
         return None
 
 
 def process_txt_files(folder_path, prefix):
-    """Process all txt files starting with a prefix (e.g., 'food_hazar') in the folder and return a Pandas DataFrame."""
+    """Process all txt files starting with a prefix (e.g., 'food_hazard') in the folder and return a Pandas DataFrame."""
     all_data = []
 
     # Get files with prefix and end with .txt
@@ -56,7 +74,7 @@ def process_txt_files(folder_path, prefix):
 
                         all_data.append(row)
                 except json.JSONDecodeError:
-                    print(f"Chyba dekódování JSON v souboru {filename}")
+                    print(f"JSON Decode Error in file: {filename}")
 
     df = pd.DataFrame(all_data)
     return df
