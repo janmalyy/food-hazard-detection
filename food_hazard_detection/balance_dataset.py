@@ -104,7 +104,7 @@ def _generate_triplets(category_map: Dict[str, List[str]], dataset: pd.DataFrame
 
             x = 0
             for i in range(len(df_subset) // 3):
-                triplet = [df_subset.iloc[[x + i]].to_csv(index=False, header=False, sep=settings.SEPARATOR).strip()
+                triplet = [df_subset.iloc[[x + i]].to_csv(index=False, header=False).strip()
                            for i in range(3)
                            ]
                 triplet_list.append([hazard, product, triplet])
