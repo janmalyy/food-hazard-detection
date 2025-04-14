@@ -1,5 +1,11 @@
 pandas
 datasets
-dotenv
+python-dotenv
 requests
 matplotlib
+seaborn
+scikit-learn
+scipy
+nltk
+numpy
+contractions
