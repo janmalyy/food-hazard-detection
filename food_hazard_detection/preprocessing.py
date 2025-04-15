@@ -9,6 +9,7 @@ from nltk.tag import pos_tag
 import re
 import string
 import contractions
+download('averaged_perceptron_tagger_eng')
 download('averaged_perceptron_tagger')
 download('stopwords')
 download('punkt_tab')
